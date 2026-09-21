@@ -3,7 +3,6 @@ name: Deploy Ozzie Staging
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -11,7 +10,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ozzie-staging-pages
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +23,6 @@ jobs:
           repository: cjeius08/zoom-support-navigator
           ref: staging
           path: app
-          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,17 +35,17 @@ jobs:
         working-directory: app
         run: npm ci
 
-      - name: Verify staging source
+      - name: Verify
         working-directory: app
         run: |
           npm test -- --run
           npm run lint
 
-      - name: Set staging Pages base
+      - name: Set staging base
         working-directory: app
         run: sed -i "s#base: '/zoom-support-navigator/'#base: '/ozzie-staging/'#" vite.config.js
 
-      - name: Build isolated staging site
+      - name: Build
         working-directory: app
         env:
           VITE_STAGING_MODE: "true"
@@ -55,8 +53,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
