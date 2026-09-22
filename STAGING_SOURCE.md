@@ -4,6 +4,6 @@ This staging site builds from:
 
 - Repository: `cjeius08/zoom-support-navigator`
 - Branch: `staging`
-- Source commit: `c57f392e7ec76f3f0fbb690b36b45bbc3ebefcb1`
+- Source commit: `1f211d9c4b7ef383bf73dda94ae35d8ebbb948cf`
 
 The production `main` branch is not used by this staging deployment.
