@@ -18,6 +18,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout isolated demo repository
+        uses: actions/checkout@v4
+        with:
+          path: preview
+
       - name: Checkout staging source
         uses: actions/checkout@v4
         with:
@@ -46,13 +51,22 @@ jobs:
       - name: Set staging Pages base
         working-directory: app
         run: |
-          sed -i "s#base: '/zoom-support-navigator/'#base: '/ozzie-staging/'#" vite.config.js
+          sed -i "s#base: '/zoom-support-navigator/'#base: '/ozzie-staging/legacy/'#" vite.config.js
 
       - name: Build isolated staging site
         working-directory: app
         env:
           VITE_STAGING_MODE: "true"
         run: npm run build
+
+      - name: Assemble Visual Home preview and original dummy fallback
+        run: |
+          test -s preview/index.html
+          grep -q 'ozzie-staging-preview' preview/index.html
+          mkdir -p site/legacy
+          cp preview/index.html site/index.html
+          cp -a app/dist/. site/legacy/
+          test -s site/legacy/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -62,7 +76,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: app/dist
+          path: site
 
   deploy:
     environment:
